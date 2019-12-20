@@ -71,11 +71,11 @@ class OptOutEmailUpdatesViewTest(ModuleStoreTestCase):
         (UsernameCipher.encrypt('test@example.com course-v1:testcourse'), "course", 'course-v1:testcourse'),
     )
     @ddt.unpack
-    def test_unsubscribe_invalid_token(self, token, message, course):
+    def test_unsubscribe_invalid_token(self, token, message):
         """
         Make sure that view returns 404 in case token is not valid
         """
         request = self.request_factory.get("dummy")
         with self.assertRaises(Http404) as err:
-            opt_out_email_updates(request, token, course)
+            opt_out_email_updates(request, token)
             self.assertIn(message, err)
