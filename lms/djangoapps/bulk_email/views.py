@@ -37,7 +37,7 @@ def opt_out_email_updates(request, token):
     """
 
     try:
-        email, course_id = UsernameCipher().decrypt(token.encode()).split(' ')
+        email, course_id = UsernameCipher().decrypt(token).split(' ')
         user = User.objects.get(email=email)
         course_key = CourseKey.from_string(course_id.decode('utf-8'))
         course = get_course_by_id(course_key, depth=0)

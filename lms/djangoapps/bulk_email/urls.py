@@ -2,7 +2,6 @@
 URLs for bulk_email app
 """
 
-from django.conf import settings
 from django.conf.urls import url
 
 from bulk_email import views

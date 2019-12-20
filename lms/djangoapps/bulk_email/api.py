@@ -42,6 +42,12 @@ def get_emails_enabled(user, course_id):
 
 
 def get_unsubscribed_link(email, course_id):
+    """
+
+    :param email: user email
+    :param course_id:
+    :return: AES encrypted token based on the email and course_id
+    """
     text_to_encrypt = u'{email} {course_id}'.format(email=email, course_id=course_id)
     token = UsernameCipher.encrypt(text_to_encrypt)
     optout_url = reverse('bulk_email_opt_out', kwargs={'token': token})

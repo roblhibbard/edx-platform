@@ -8,11 +8,20 @@ from django.utils.translation import ugettext as _
 
 <%namespace name='static' file='../static_content.html'/>
 
+<%block name="pagetitle">${Text(_("Unsubscribe"))}</%block>
 <section class="container unsubscribe">
 
   <section class="message">
-      <h1>Unsubscribe</h1>
+      <h1>
+
+          <%block name="pageheader">${Text(_("Unsubscribe"))} </%block>
+
+      </h1>
+
         <form action="" method="POST">
+
+            <%block name="pagecontent">
+
             <input type="hidden" name="csrfmiddlewaretoken" value="${ csrf_token }">
             <input type="checkbox" name="unsubscribe" checked>
             ${Text(_("Do you want to unsubscribe from emails for {course}?")).format(
@@ -21,9 +30,13 @@ from django.utils.translation import ugettext as _
             <p>
                 ${Text(_("Note:You will still receive course emails from other courses you are enrolled in."))}
             </p>
-           <br><br><br>
+           <br><br>
           <input type="submit" value="Confirm">
+
+          </%block>
+
         </form>
+
 
   </section>
 </section>

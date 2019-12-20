@@ -9,8 +9,6 @@ import re
 
 from django.core import mail
 from django.core.management import call_command
-from django.http import Http404
-from django.test import RequestFactory
 from django.urls import reverse
 from edx_ace.channel import ChannelType
 from edx_ace.message import Message
@@ -25,8 +23,6 @@ from student.models import CourseEnrollment
 from student.tests.factories import AdminFactory, CourseEnrollmentFactory, UserFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
-
-from lms.djangoapps.bulk_email.views import opt_out_email_updates
 
 
 @patch('bulk_email.models.html_to_text', Mock(return_value='Mocking CourseEmail.text_message', autospec=True))

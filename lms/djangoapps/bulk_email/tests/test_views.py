@@ -68,7 +68,7 @@ class OptOutEmailUpdatesViewTest(ModuleStoreTestCase):
         ("nMXVK7PdSlKPOovci-M7iqS09Ux8VoCNDJixLBmj", "aes"),
         ("AAAAAAAAAAAAAAAAAAAAAMoazRI7ePLjEWXN1N7keLw=", "padding"),
         (UsernameCipher.encrypt('testuser@example.com course-v1:testcourse1'), "email"),
-        (UsernameCipher.encrypt('test@example.com course-v1:testcourse'), "course", 'course-v1:testcourse'),
+        (UsernameCipher.encrypt('test@example.com course-v1:testcourse'), "course"),
     )
     @ddt.unpack
     def test_unsubscribe_invalid_token(self, token, message):
