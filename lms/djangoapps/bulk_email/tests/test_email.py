@@ -6,6 +6,7 @@ from __future__ import absolute_import
 
 import json
 import os
+import re
 from unittest import skipIf
 
 import ddt
@@ -603,6 +604,28 @@ class TestEmailSendFromDashboardMockedHtmlToText(EmailSendFromDashboardTestCase)
                                 [s.email for s in added_users if s not in optouts])
         six.assertCountEqual(self, outbox_contents, should_send_contents)
 
+    def test_unsubscribe_link_in_email(self):
+        """
+        Make sure email (with Unicode characters) send to all goes there.
+        """
+
+        test_email = {
+            'action': 'Send email',
+            'send_to': '["learners"]',
+            'subject': 'Checking unsubscribe link in email',
+            'message': 'test message for all'
+        }
+        response = self.client.post(self.send_mail_url, test_email)
+        self.assertEquals(json.loads(response.content.decode('utf-8')), self.success_content)
+
+        # check unsubscribe link in template
+        for m in mail.outbox:
+            plain_template = m.body
+            html_template = m.alternatives[0][0]
+
+            assert u'bulk_email/email/optout/' in plain_template
+            assert u'bulk_email/email/optout/' in html_template
+
 
 @skipIf(os.environ.get("TRAVIS") == 'true', "Skip this test in Travis CI.")
 class TestEmailSendFromDashboard(EmailSendFromDashboardTestCase):
@@ -694,3 +717,4 @@ class TestCourseEmailContext(SharedModuleStoreTestCase):
         """
         email_context = _get_course_email_context(self.course)
         self.verify_email_context(email_context, 'https')
+
