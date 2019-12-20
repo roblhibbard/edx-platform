@@ -50,16 +50,16 @@ def opt_out_email_updates(request, token):
     except InvalidKeyError:
         raise Http404("courseId")
 
+    unsub_check = request.POST.get('unsubscribe', False)
     context = {
         'course': course,
-        'cancelled': False,
-        'confirmed': False,
+        'unsubscribe': unsub_check
     }
 
     if request.method == 'GET':
-        return render_to_response('bulk_email/unsubscribe.html', context)
+        return render_to_response('bulk_email/confirm_unsubscribe.html', context)
 
-    if request.method == 'POST' and request.POST.get('unsubscribe'):
+    if request.method == 'POST' and unsub_check:
         Optout.objects.get_or_create(user=user, course_id=course_key)
         log.info(
             u"User %s (%s) opted out of receiving emails from course %s",
@@ -68,5 +68,7 @@ def opt_out_email_updates(request, token):
             course_id,
         )
 
-        return render_to_response("unsubscribe_success.html")
+    return render_to_response('bulk_email/unsubscribe_success.html', context)
+
+
 

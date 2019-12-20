@@ -111,24 +111,21 @@ class TestOptoutCourseEmails(ModuleStoreTestCase):
         self.assertEquals(json.loads(response.content.decode('utf-8')), self.success_content)
 
         # check unsubscribe link in template
-        for m in mail.outbox:
-            plain_template = m.body
-            html_template = m.alternatives[0][0]
+        plain_template = mail.outbox[0].body
+        html_template = mail.outbox[0].alternatives[0][0]
 
-            assert u'bulk_email/email/optout/' in plain_template
-            assert u'bulk_email/email/optout/' in html_template
+        assert u'bulk_email/email/optout/' in plain_template
+        assert u'bulk_email/email/optout/' in html_template
 
         unsubscribe_link = re.findall(r"""/bulk_email.*?=[^']""", mail.outbox[0].alternatives[0][0])[0].strip()
         response = self.client.get(unsubscribe_link+'/')
 
         self.assertContains(response, 'unsubscribe')
 
-        response = self.client.post(unsubscribe_link+'/', {'unsubscribe': 'On'})
+        response = self.client.post(unsubscribe_link+'/', {'unsubscribe': True})
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'You are successfully unsubscribed.')
-
-        self.client.logout()
+        self.assertContains(response, 'You are successfully unsubscribed')
 
         test_email = {
             'action': 'Send email',
@@ -139,11 +136,6 @@ class TestOptoutCourseEmails(ModuleStoreTestCase):
         response = self.client.post(self.send_mail_url, test_email)
         self.assertEquals(json.loads(response.content.decode('utf-8')), self.success_content)
         self.assertEqual(len(mail.outbox), 1)
-
-    def test_unsubscribe_using_invalid_token(self):
-        request_factory = RequestFactory()
-        request = request_factory.post("dummy=")
-        self.assertRaisesRegexp(Http404, "^{}$".format('base64url'), opt_out_email_updates, request, "dummy")
 
     def test_optin_course(self):
         """

@@ -42,34 +42,34 @@ class OptOutEmailUpdatesViewTest(ModuleStoreTestCase):
         Ensure that the default GET view asks for confirmation.
         """
         response = self.client.get(self.url)
-        self.assertContains(response, "Do you want to unsubscribe from emails for Test Course Title?")
+        self.assertContains(response, "Confirm unsubscribe from")
         self.assertEqual(Optout.objects.count(), 0)
 
     def test_opt_out_email_unsubscribe(self):
         """
         Ensure that the POSTing "confirm" creates the opt-out record.
         """
-        response = self.client.post(self.url, {'submit': 'confirm'})
-        self.assertContains(response, "You have been unsubscribed from emails for Test Course Title.")
+        response = self.client.post(self.url, {'unsubscribe': True})
+        self.assertContains(response, "You are successfully unsubscribed")
         self.assertEqual(Optout.objects.count(), 1)
 
     def test_opt_out_email_cancel(self):
         """
         Ensure that the POSTing "cancel" does not create the opt-out record
         """
-        response = self.client.post(self.url, {'submit': 'cancel'})
-        self.assertContains(response, "You have not been unsubscribed from emails for Test Course Title.")
+        response = self.client.post(self.url, {'unsubscribe': False})
+        self.assertContains(response, "You have not been unsubscribed from")
         self.assertEqual(Optout.objects.count(), 0)
 
     @ddt.data(
-        ("ZOMG INVALID BASE64 CHARS!!!", "base64url", False),
-        ("Non-ASCII\xff", "base64url", False),
-        ("D6L8Q01ztywqnr3coMOlq0C3DG05686lXX_1ArEd0ok", "base64url", False),
-        ("AAAAAAAAAAA=", "initialization_vector", False),
-        ("nMXVK7PdSlKPOovci-M7iqS09Ux8VoCNDJixLBmj", "aes", False),
-        ("AAAAAAAAAAAAAAAAAAAAAMoazRI7ePLjEWXN1N7keLw=", "padding", False),
-        ("AAAAAAAAAAAAAAAAAAAAACpyUxTGIrUjnpuUsNi7mAY=", "username", False),
-        ("_KHGdCAUIToc4iaRGy7K57mNZiiXxO61qfKT08ExlY8=", "course", 'course-v1:testcourse'),
+        ("ZOMG INVALID BASE64 CHARS!!!", "base64url"),
+        ("Non-ASCII\xff", "base64url"),
+        ("D6L8Q01ztywqnr3coMOlq0C3DG05686lXX_1ArEd0ok", "base64url"),
+        ("AAAAAAAAAAA=", "initialization_vector"),
+        ("nMXVK7PdSlKPOovci-M7iqS09Ux8VoCNDJixLBmj", "aes"),
+        ("AAAAAAAAAAAAAAAAAAAAAMoazRI7ePLjEWXN1N7keLw=", "padding"),
+        (UsernameCipher.encrypt('testuser course-v1:testcourse1'), "username"),
+        (UsernameCipher.encrypt('testuser1 course-v1:testcourse'), "course", 'course-v1:testcourse'),
     )
     @ddt.unpack
     def test_unsubscribe_invalid_token(self, token, message, course):
