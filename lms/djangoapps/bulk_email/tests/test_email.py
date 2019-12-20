@@ -717,4 +717,3 @@ class TestCourseEmailContext(SharedModuleStoreTestCase):
         """
         email_context = _get_course_email_context(self.course)
         self.verify_email_context(email_context, 'https')
-

@@ -2,7 +2,6 @@
 """
 Test the bulk email opt out view.
 """
-from six import text_type
 
 import ddt
 from django.http import Http404
@@ -29,10 +28,10 @@ class OptOutEmailUpdatesViewTest(ModuleStoreTestCase):
     def setUp(self):
         super(OptOutEmailUpdatesViewTest, self).setUp()
         self.user = UserFactory.create(username="testuser1", email='test@example.com')
-        self.token = UsernameCipher.encrypt('testuser1')
+        self.token = UsernameCipher.encrypt('test@example.com')
         self.request_factory = RequestFactory()
         self.course = CourseFactory.create(run='testcourse1', display_name='Test Course Title')
-        self.url = reverse('bulk_email_opt_out', args=[self.token, text_type(self.course.id)])
+        self.url = reverse('bulk_email_opt_out', args=[self.token])
 
         # Ensure we start with no opt-out records
         self.assertEqual(Optout.objects.count(), 0)

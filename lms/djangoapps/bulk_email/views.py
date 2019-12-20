@@ -69,6 +69,3 @@ def opt_out_email_updates(request, token):
         )
 
     return render_to_response('bulk_email/unsubscribe_success.html', context)
-
-
-
