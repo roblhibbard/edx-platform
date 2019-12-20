@@ -28,7 +28,7 @@ class OptOutEmailUpdatesViewTest(ModuleStoreTestCase):
     """
     def setUp(self):
         super(OptOutEmailUpdatesViewTest, self).setUp()
-        self.user = UserFactory.create(username="testuser1")
+        self.user = UserFactory.create(username="testuser1", email='test@example.com')
         self.token = UsernameCipher.encrypt('testuser1')
         self.request_factory = RequestFactory()
         self.course = CourseFactory.create(run='testcourse1', display_name='Test Course Title')
@@ -68,8 +68,8 @@ class OptOutEmailUpdatesViewTest(ModuleStoreTestCase):
         ("AAAAAAAAAAA=", "initialization_vector"),
         ("nMXVK7PdSlKPOovci-M7iqS09Ux8VoCNDJixLBmj", "aes"),
         ("AAAAAAAAAAAAAAAAAAAAAMoazRI7ePLjEWXN1N7keLw=", "padding"),
-        (UsernameCipher.encrypt('testuser course-v1:testcourse1'), "username"),
-        (UsernameCipher.encrypt('testuser1 course-v1:testcourse'), "course", 'course-v1:testcourse'),
+        (UsernameCipher.encrypt('testuser@example.com course-v1:testcourse1'), "email"),
+        (UsernameCipher.encrypt('test@example.com course-v1:testcourse'), "course", 'course-v1:testcourse'),
     )
     @ddt.unpack
     def test_unsubscribe_invalid_token(self, token, message, course):
